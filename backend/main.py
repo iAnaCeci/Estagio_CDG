@@ -111,28 +111,19 @@ def add_drawer():
 
 
 # Update a gaveta by ID
-@app.route('/update_gaveta/<int:gaveta_id>', methods=['PUT'])
-def update_gaveta(gaveta_id):
-    print(f"Received PUT request for gaveta_id: {gaveta_id}")
+@app.route('/update_gaveta', methods=['PUT'])
+def update_gaveta():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
-        # Check if the gaveta_id exists in the database
-        cursor.execute("SELECT idGaveta FROM Gaveta WHERE idGaveta = %s", (gaveta_id,))
-        result = cursor.fetchone()
-        if result is None:
-            cursor.close()
-            connection.close()
-            return jsonify({'message': 'Gaveta not found'}), 404
-
-        # Extract updated data from the request JSON
         data = request.get_json()
+        gaveta_id = data.get('id')
         updated_name = data.get('nome')
         updated_description = data.get('descricao')
         updated_estado = data.get('estado')
 
-        # Update the gaveta with the provided ID
+
         query = "UPDATE Gaveta SET nome = %s, descricao = %s, estado = %s WHERE idGaveta = %s"
         values = (updated_name, updated_description, updated_estado, gaveta_id)
 
@@ -147,6 +138,45 @@ def update_gaveta(gaveta_id):
         print('Error updating gaveta:', str(e))
         return jsonify({'message': 'Failed to update the gaveta'}), 500
 
+
+
+
+# @app.route('/update_gaveta/<int:gaveta_id>', methods=['PUT'])
+# def update_gaveta(gaveta_id):
+#     print(f"Received PUT request for gaveta_id: {gaveta_id}")
+#     try:
+#         connection = mysql.connector.connect(**db_config)
+#         cursor = connection.cursor()
+#
+#         # Check if the gaveta_id exists in the database
+#         cursor.execute("SELECT idGaveta FROM Gaveta WHERE idGaveta = %s", (gaveta_id,))
+#         result = cursor.fetchone()
+#         if result is None:
+#             cursor.close()
+#             connection.close()
+#             return jsonify({'message': 'Gaveta not found'}), 404
+#
+#         # Extract updated data from the request JSON
+#         data = request.get_json()
+#         updated_name = data.get('nome')
+#         updated_description = data.get('descricao')
+#         updated_estado = data.get('estado')
+#
+#         # Update the gaveta with the provided ID
+#         query = "UPDATE Gaveta SET nome = %s, descricao = %s, estado = %s WHERE idGaveta = %s"
+#         values = (updated_name, updated_description, updated_estado, gaveta_id)
+#
+#         cursor.execute(query, values)
+#         connection.commit()
+#         cursor.close()
+#         connection.close()
+#
+#         return jsonify({'message': 'Gaveta updated successfully'}), 200
+#
+#     except Exception as e:
+#         print('Error updating gaveta:', str(e))
+#         return jsonify({'message': 'Failed to update the gaveta'}), 500
+#
 
 # Delete a gaveta by ID
 # @app.route('/delete_gaveta/<int:gaveta_id>', methods=['DELETE'])
@@ -224,6 +254,47 @@ def get_gavetas():
     except Exception as e:
         print('Error fetching gavetas:', str(e))
         return jsonify({'message': 'Failed to fetch gavetas'}), 500
+
+
+#drawerbyrack
+@app.route('/get_gavetas_por_rack/<int:rack_id>', methods=['GET'])
+def get_gavetas_por_rack(rack_id):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT G.* FROM Gaveta G INNER JOIN Rack R ON G.Rack_idRack = R.idRack WHERE R.idRack = %s"
+        cursor.execute(query, (rack_id,))
+        gavetas = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return jsonify({'data': gavetas}), 200
+    except Exception as e:
+        print('Error fetching gavetas:', str(e))
+        return jsonify({'message': 'Failed to fetch gavetas'}), 500
+
+
+# Get all racks
+from flask import jsonify
+
+
+@app.route('/get_racks', methods=['GET'])
+def get_racks():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT * FROM Rack"
+        cursor.execute(query)
+        racks = cursor.fetchall()
+        cursor.close()
+        connection.close()
+
+        print('Racks retrieved successfully:', racks)
+
+        return jsonify({'data': racks}), 200
+    except Exception as e:
+        print('Error fetching racks:', str(e))
+        return jsonify({'message': 'Failed to fetch racks'}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
