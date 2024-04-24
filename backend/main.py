@@ -207,7 +207,7 @@ def update_gaveta():
 #         return jsonify({'message': 'Failed to delete the gaveta'}), 500
 #
 #
-
+#
 
 # Delete a rack by ID
 @app.route('/delete_rack/<int:rack_id>', methods=['DELETE'])
@@ -273,8 +273,6 @@ def get_gavetas_por_rack(rack_id):
         return jsonify({'message': 'Failed to fetch gavetas'}), 500
 
 
-# Get all racks
-from flask import jsonify
 
 
 @app.route('/get_racks', methods=['GET'])
@@ -294,6 +292,89 @@ def get_racks():
     except Exception as e:
         print('Error fetching racks:', str(e))
         return jsonify({'message': 'Failed to fetch racks'}), 500
+
+# Rota para criar um novo registro
+# Rota para criar um novo registro
+@app.route('/registro', methods=['POST'])
+def create_registro():
+    data = request.json
+    print("Dados recebidos:", data)
+
+    if data:
+        try:
+            connection = mysql.connector.connect(**db_config)
+            cursor = connection.cursor()
+
+            # Convertendo o valor da hora para o formato adequado (HH:MM:SS)
+            hora_str = data['hora'].split('(')[1].split(')')[0]  # Extrair o valor da hora da string
+            hora_parts = hora_str.split(':')  # Dividir a string em partes
+            hora_str = f"{hora_parts[0]}:{hora_parts[1]}:00"  # Formatar a hora como HH:MM:SS
+
+            print("Hora formatada:", hora_str)
+
+            query = "INSERT INTO Registro (data, hora, cor, observacao, Gaveta_idGaveta) VALUES (%s, %s, %s, %s, %s)"
+            values = (data['data'], hora_str, data['cor'], data['observacao'], data['Gaveta_idGaveta'])
+
+            cursor.execute(query, values)
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return jsonify({'message': 'Registro criado com sucesso'}), 201
+        except Exception as e:
+            print("Erro ao inserir no banco de dados:", e)
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'message': 'Dados inválidos'}), 400
+
+# Rota para atualizar um registro existente
+@app.route('/registro/<int:idRegistro>', methods=['PUT'])
+def update_registro(idRegistro):
+    data = request.json
+    if data:
+        try:
+            connection = mysql.connector.connect(**db_config)
+            cursor = connection.cursor()
+            query = "UPDATE Registro SET data = %s, hora = %s, cor = %s, observacao = %s, Gaveta_idGaveta = %s WHERE idRegistro = %s"
+            values = (data['data'], data['hora'], data['cor'], data['observacao'], data['Gaveta_idGaveta'], idRegistro)
+            cursor.execute(query, values)
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return jsonify({'message': 'Registro atualizado com sucesso'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'message': 'Dados inválidos'}), 400
+
+# Rota para listar todos os registros
+@app.route('/registro', methods=['GET'])
+def list_registros():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT * FROM Registro"
+        cursor.execute(query)
+        registros = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return jsonify({'data': registros}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Rota para excluir um registro
+@app.route('/registro/<int:idRegistro>', methods=['DELETE'])
+def delete_registro(idRegistro):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "DELETE FROM Registro WHERE idRegistro = %s"
+        cursor.execute(query, (idRegistro,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Registro excluído com sucesso'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
