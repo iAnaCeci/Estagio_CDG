@@ -20,5 +20,5 @@ Oi, o objetivo do projeto é ter o controle do Rack de notebook do laboratório 
 - Como executar uma instância usando EC2: https://youtu.be/z5XiVh6v4uI?si=WQ-3S0-lBw3dHee3
   
 
-Espero que seja um aprendizado, peço desculpas por não estar um código muito limpo, mas está funiconal.
+Espero que seja um aprendizado, peço perdão por algumas faltas em relação a modularização do código, mas está funiconal.
 Obrigada :)
