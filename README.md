@@ -15,7 +15,10 @@ Oi, o objetivo do projeto é ter o controle do Rack de notebook do laboratório 
 -A api também está funcionando muito bem, só que ela não está modularizada e tem um pouco de repetição de código, vou tentar deixar comentado a parte para você modularizar o cógigo para ficar mais limpo.
 
 -Commitei todos os requeriments necessários para rodar a api, estou usando flask.
-
+- Coloquei o banco de dados e a api na nuvem, para fazer esses procedimentos pode seguir esses links que vou deixar aqui:
+- Como colocar o banco usando o RDS: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.Python.html
+- Como executar uma instância usando EC2: https://youtu.be/z5XiVh6v4uI?si=WQ-3S0-lBw3dHee3
+  
 
 Espero que seja um aprendizado, peço desculpas por não estar um código muito limpo, mas está funiconal.
 Obrigada :)
