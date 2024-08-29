@@ -2,7 +2,7 @@
 Oi, o objetivo do projeto é ter o controle do Rack de notebook do laboratório CDG.
 
 # FrontEnd
--O front end foi desenvolvido usando o framework dart, as partes que deixei comentada, por exemplo a classe drawer.dart pode ser excluída, (ela está lá com o código interiro, depois eu dividi em outras classes essa classe).
+-O front end foi desenvolvido usando o framework flutter, as partes que deixei comentada, por exemplo a classe drawer.dart pode ser excluída, (ela está lá com o código interiro, depois eu dividi em outras classes essa classe).
 
 -Também a classe registration_page.dart e login_page falta só a implementação, por esse mesmo motivo está comentada.
 
